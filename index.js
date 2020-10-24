@@ -43,6 +43,17 @@ console.log(result);
 //below is how we are retrieving courses from the database. there are a bunch of out of the box methods that come with mongoose (find, limit, sort, etc)
 
 async function getCourses() {
+    
+    //below are nodejs comparison operators:
+    // eq (equal)
+    //ne (not equal)
+    //gt (greater than)
+    //gte (greater than or equal to)
+    //lt (less than)
+    //lte (less than or equal to)
+    //in
+    // nin (not in)
+
 
     const courses = await Course
         .find({ author: 'marcus', isPublished: true})
