@@ -108,10 +108,10 @@ async function updateCourse(id){
 
     //Approach: Query first document updating: findById() -> modify its properties -> save()
 
-   const course = await Course.findById(id);
-   if (!course) return;
-   course.isPublished = true;
-   course.author = 'some dude';
+//    const course = await Course.findById(id);
+//    if (!course) return;
+//    course.isPublished = true;
+//    course.author = 'some dude';
 
    //the two lines above this will do the same as below
 //    course.set({
@@ -120,7 +120,18 @@ async function updateCourse(id){
 //    });
 
 //below saves the changes back in the db. save is an out of the box mongoose method. 
-const result = await course.save();
+// const result = await course.save();
+
+
+//below is how we can upate a course directly without finding it first (not recommended if you are taking user input). you can also bulk update courses with this method
+const result = await Course.update({ _id: id }, {
+
+    $set: {
+        author: 'piggy',
+        isPublished: false
+    }
+});
+
 console.log(result);
 
 
