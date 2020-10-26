@@ -142,6 +142,21 @@ console.log(result);
 
 
 
-updateCourse("5f9478981e967404dc5e6f43");
+
+//below is how to delete a course. it is going to find one course and delete that course. don't use as a bulk delete. 
+//you can bulk delete documents by using the 'delete many' method
+
+async function removeCourse(id){
+
+    const result = await Course.deleteOne({ _id: id});
+
+    //can also use the findByIdAndRemove() method.
+    // const result = await Course.findByIdAndRemove(id);
+    console.log(result);
+
+}
+
+
+removeCourse("5f9478981e967404dc5e6f43");
 // getCourses();
 
