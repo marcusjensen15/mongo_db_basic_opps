@@ -93,8 +93,8 @@ async function getCourses() {
 // .find({ author: /.*marcus.*/i})
 
         .find({ author: 'marcus', isPublished: true})
-        .skip(( pageNumber - 1) * pageSize)
-        .limit(pageSize)
+        // .skip(( pageNumber - 1) * pageSize)
+        // .limit(pageSize)
         .sort({ name: 1})
         .select({ name: 1, tags: 1});
 
@@ -104,5 +104,33 @@ async function getCourses() {
 
 }
 
-getCourses();
+async function updateCourse(id){
+
+    //Approach: Query first document updating: findById() -> modify its properties -> save()
+
+   const course = await Course.findById(id);
+   if (!course) return;
+   course.isPublished = true;
+   course.author = 'some dude';
+
+   //the two lines above this will do the same as below
+//    course.set({
+//        isPublished: true,
+//        author: 'some other dude'
+//    });
+
+//below saves the changes back in the db. save is an out of the box mongoose method. 
+const result = await course.save();
+console.log(result);
+
+
+    //Update first Approach 
+    // Update directly, can optionally get the updated document 
+
+}
+
+
+
+updateCourse("5f9478981e967404dc5e6f43");
+// getCourses();
 
