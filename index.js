@@ -43,6 +43,8 @@ console.log(result);
 //below is how we are retrieving courses from the database. there are a bunch of out of the box methods that come with mongoose (find, limit, sort, etc)
 
 async function getCourses() {
+    const pageNumber = 2;
+    const pageSize = 10; 
     
     //below are nodejs comparison operators:
     // eq (equal)
@@ -83,8 +85,16 @@ async function getCourses() {
 
         //below is 'contains' marcus. .*stuff.* means we can have 0 or more characters before or after. the i at the end makes it case insensitive. 
 
-.find({ author: /.*mosh.*/i})
-        .limit(10)
+        // .count() returns the number of documents that match a search criteria. Can be tacked on to the end.
+
+        // the .skip() method is used to implement paginaton.
+
+
+// .find({ author: /.*marcus.*/i})
+
+        .find({ author: 'marcus', isPublished: true})
+        .skip(( pageNumber - 1) * pageSize)
+        .limit(pageSize)
         .sort({ name: 1})
         .select({ name: 1, tags: 1});
 
