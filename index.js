@@ -10,14 +10,35 @@ mongoose.connect('mongodb://localhost/playground')
 
 //below defines the shape of course documents in mongodb
 //we are making these fields required. this 'required' modifier only exists in mongoose. mongodb doesn't know what that is. 
+// we also use joi to make sure that the data the client is sending us is valid. we use this type of validation to make sure the data is
+// in the right shape for the DB. 
+//below are a bunch more validators 
 
 const courseSchema = new mongoose.Schema({
 
-    name: {type: String, required: true},
+    name: {type: String, 
+           required: true,
+            minlength: 5,
+            maxlength: 100
+            },
+
+    category: {
+        type: String,
+        required: true,
+        enum: ['web', 'mobile', 'network']
+    },
     author: String,
     tags: [ String ],
     date: { type: Date, default: Date.now},
-    isPublished: Boolean
+    isPublished: Boolean,
+
+    //if isPublished is true, price will be required. THIS CANNOT BE AN ARROW FUNCTION
+    price: {
+        type: Number,
+        min: 10,
+        max: 200,
+        required: function() { return this.isPublished; }
+    }
 
 });
 
@@ -27,10 +48,12 @@ const courseSchema = new mongoose.Schema({
 const Course = mongoose.model('Course', courseSchema);
 
 const course = new Course({
-    // name: 'Angular Course',
+    name: 'Angular Course',
     author: 'marcus',
+    category: '-',
     tags: [ 'angular', 'frontend'],
-    isPublished: true 
+    isPublished: true,
+    price: 15
 });
 
 
