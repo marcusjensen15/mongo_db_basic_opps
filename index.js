@@ -9,10 +9,11 @@ mongoose.connect('mongodb://localhost/playground')
 
 
 //below defines the shape of course documents in mongodb
+//we are making these fields required. this 'required' modifier only exists in mongoose. mongodb doesn't know what that is. 
 
 const courseSchema = new mongoose.Schema({
 
-    name: String,
+    name: {type: String, required: true},
     author: String,
     tags: [ String ],
     date: { type: Date, default: Date.now},
@@ -26,7 +27,7 @@ const courseSchema = new mongoose.Schema({
 const Course = mongoose.model('Course', courseSchema);
 
 const course = new Course({
-    name: 'Angular Course',
+    // name: 'Angular Course',
     author: 'marcus',
     tags: [ 'angular', 'frontend'],
     isPublished: true 
@@ -36,8 +37,21 @@ const course = new Course({
 //below is an async operation, it doesn't happen instantly. It returns a promise so we can 'await' it.
 
 async function createCourse() {
-const result = await course.save();
-console.log(result);
+
+
+    try{
+
+        //course has this validate method built in
+        // await course.validate((err) => {
+
+        // });
+        const result = await course.save();
+        console.log(result);
+    }
+    catch(ex){
+        console.log(ex.message);
+    }
+
 }
 
 //below is how we are retrieving courses from the database. there are a bunch of out of the box methods that come with mongoose (find, limit, sort, etc)
@@ -157,6 +171,7 @@ async function removeCourse(id){
 }
 
 
-removeCourse("5f9478981e967404dc5e6f43");
+// removeCourse("5f9478981e967404dc5e6f43");
 // getCourses();
+createCourse();
 
