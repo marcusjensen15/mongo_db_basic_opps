@@ -13,6 +13,8 @@ mongoose.connect('mongodb://localhost/playground')
 // we also use joi to make sure that the data the client is sending us is valid. we use this type of validation to make sure the data is
 // in the right shape for the DB. 
 //below are a bunch more validators 
+//set custom validator for tags, and custom error message.
+// making 'validate' an async validator
 
 const courseSchema = new mongoose.Schema({
 
@@ -25,18 +27,38 @@ const courseSchema = new mongoose.Schema({
     category: {
         type: String,
         required: true,
-        enum: ['web', 'mobile', 'network']
+        enum: ['web', 'mobile', 'network'],
+        lowercase: true
+        // uppercase: true,
+        // trim: true
     },
     author: String,
-    tags: [ String ],
+    tags: { 
+        type: Array,
+        validate: {
+            isAsync: true,
+            validator: function(v, callback){
+                setTimeout(() => {
+                    //do some async stuff
+                    const result = v && v.length > 0;
+                    callback(result);
+                }, 4000);
+                
+            },
+        message: 'a course should have at least 1 tag' 
+        }
+    },
     date: { type: Date, default: Date.now},
     isPublished: Boolean,
 
     //if isPublished is true, price will be required. THIS CANNOT BE AN ARROW FUNCTION
+    //this below get and set will round point values for us
     price: {
         type: Number,
         min: 10,
         max: 200,
+        get: v => Math.round(v),
+        set: v => Math.round(v),
         required: function() { return this.isPublished; }
     }
 
@@ -50,10 +72,10 @@ const Course = mongoose.model('Course', courseSchema);
 const course = new Course({
     name: 'Angular Course',
     author: 'marcus',
-    category: '-',
-    tags: [ 'angular', 'frontend'],
+    category: 'Mobile',
+    tags: ['puppy', 'pistol'],
     isPublished: true,
-    price: 15
+    price: 15.65
 });
 
 
@@ -71,8 +93,11 @@ async function createCourse() {
         const result = await course.save();
         console.log(result);
     }
+
+    //the ex object has a built in 'error' property. Also this is an interesting way of using a loop that i haven't used
     catch(ex){
-        console.log(ex.message);
+        for (field in ex.errors)
+            console.log(ex.errors[field].message);
     }
 
 }
